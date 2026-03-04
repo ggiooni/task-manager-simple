@@ -1,0 +1,17 @@
+{
+  "name": "inventory-manager",
+  "version": "1.0.0",
+  "description": "Simple Inventory Management System - DevOps Project",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "keywords": [],
+  "author": "Nicolas Boggioni Troncoso",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
