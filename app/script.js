@@ -6,7 +6,9 @@ const nameInput = document.getElementById("itemName");
 const qtyInput = document.getElementById("itemQty");
 const priceInput = document.getElementById("itemPrice");
 const addBtn = document.getElementById("addBtn");
+const cancelBtn = document.getElementById("cancelBtn");
 const searchInput = document.getElementById("searchInput");
+const clearAllBtn = document.getElementById("clearAllBtn");
 const tbody = document.getElementById("inventoryBody");
 
 form.addEventListener("submit", function (e) {
@@ -20,9 +22,7 @@ form.addEventListener("submit", function (e) {
 
     if (editIndex >= 0) {
         inventory[editIndex] = { name, qty, price };
-        editIndex = -1;
-        addBtn.textContent = "Add Item";
-        addBtn.classList.remove("editing");
+        cancelEdit();
     } else {
         inventory.push({ name, qty, price });
     }
@@ -31,7 +31,29 @@ form.addEventListener("submit", function (e) {
     form.reset();
 });
 
+cancelBtn.addEventListener("click", function () {
+    cancelEdit();
+    form.reset();
+});
+
+clearAllBtn.addEventListener("click", function () {
+    if (inventory.length === 0) return;
+    if (confirm("Delete all items? This cannot be undone.")) {
+        inventory = [];
+        cancelEdit();
+        form.reset();
+        saveAndRender();
+    }
+});
+
 searchInput.addEventListener("input", render);
+
+function cancelEdit() {
+    editIndex = -1;
+    addBtn.textContent = "Add Item";
+    addBtn.classList.remove("editing");
+    cancelBtn.style.display = "none";
+}
 
 function saveAndRender() {
     localStorage.setItem("inventory", JSON.stringify(inventory));
@@ -44,18 +66,24 @@ function render() {
 
     let totalItems = 0;
     let totalValue = 0;
+    let visibleCount = 0;
 
     inventory.forEach(function (item, index) {
         if (filter && !item.name.toLowerCase().includes(filter)) return;
 
+        visibleCount++;
         const total = item.qty * item.price;
         totalItems += item.qty;
         totalValue += total;
 
         const tr = document.createElement("tr");
+        if (item.qty <= 5) {
+            tr.classList.add("low-stock");
+        }
+
         tr.innerHTML =
             "<td>" + item.name + "</td>" +
-            "<td>" + item.qty + "</td>" +
+            "<td>" + item.qty + (item.qty <= 5 ? ' <span class="low-badge">Low</span>' : '') + "</td>" +
             "<td>$" + item.price.toFixed(2) + "</td>" +
             "<td>$" + total.toFixed(2) + "</td>" +
             "<td>" +
@@ -64,6 +92,14 @@ function render() {
             "</td>";
         tbody.appendChild(tr);
     });
+
+    if (visibleCount === 0) {
+        var emptyRow = document.createElement("tr");
+        emptyRow.innerHTML = '<td colspan="5" class="empty-state">' +
+            (filter ? "No items match your search." : "No items yet. Add one above!") +
+            "</td>";
+        tbody.appendChild(emptyRow);
+    }
 
     document.getElementById("totalItems").textContent = "Items: " + totalItems;
     document.getElementById("totalValue").textContent = "Total Value: $" + totalValue.toFixed(2);
@@ -77,6 +113,7 @@ function render() {
             editIndex = i;
             addBtn.textContent = "Update Item";
             addBtn.classList.add("editing");
+            cancelBtn.style.display = "inline-block";
             nameInput.focus();
         });
     });
@@ -87,9 +124,7 @@ function render() {
             if (confirm("Delete " + inventory[i].name + "?")) {
                 inventory.splice(i, 1);
                 if (editIndex === i) {
-                    editIndex = -1;
-                    addBtn.textContent = "Add Item";
-                    addBtn.classList.remove("editing");
+                    cancelEdit();
                     form.reset();
                 }
                 saveAndRender();
