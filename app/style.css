@@ -63,13 +63,40 @@ h1 {
     background: #0069d9;
 }
 
+.btn-cancel {
+    background: #6c757d !important;
+}
+
+.btn-cancel:hover {
+    background: #5a6268 !important;
+}
+
+.toolbar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
 #searchInput {
-    width: 100%;
+    flex: 1;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    margin-bottom: 15px;
     font-size: 14px;
+}
+
+.btn-clear-all {
+    padding: 10px 16px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-clear-all:hover {
+    background: #c82333;
 }
 
 table {
@@ -91,6 +118,32 @@ th {
 
 tr:hover {
     background: #f9f9f9;
+}
+
+tr.low-stock {
+    background: #fff3cd;
+}
+
+tr.low-stock:hover {
+    background: #ffeaa0;
+}
+
+.low-badge {
+    display: inline-block;
+    background: #ffc107;
+    color: #333;
+    font-size: 11px;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-weight: bold;
+    margin-left: 4px;
+}
+
+.empty-state {
+    text-align: center;
+    color: #999;
+    padding: 20px !important;
+    font-style: italic;
 }
 
 .btn-edit, .btn-delete {
